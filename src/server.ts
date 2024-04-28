@@ -1,11 +1,14 @@
 import express from 'express';
 import cors from 'cors';
+import "dotenv/config";
 import * as swaggerDocument from './swagger.json';
 import swaggerUi from 'swagger-ui-express';
+import { Routes } from './routes';
+import { connectToMongoDB, disconnectFromMongoDB } from "./infra/database/mongodb";
 
 class Server {
     private app;
-    
+
     private readonly PORT: number;
 
     constructor() {
@@ -13,6 +16,8 @@ class Server {
         this.PORT = parseInt(process.env.PORT as string, 10) || 3000;
         this.configureMiddlewares();
         this.configureRoutes();
+        connectToMongoDB();
+        this.onDisconnect();
     }
 
     private configureMiddlewares(): void {
@@ -23,10 +28,11 @@ class Server {
     }
 
     private configureRoutes(): void {
-        // Configurar as rotas aqui
-        this.app.get('/', (req, res) => {
-            res.send('Hello, world!');
-        });
+        try {
+            new Routes(this.app);
+        } catch (e) {
+            console.error("Erro a criar rotas -> ", e)
+        }
     }
 
     public start(): void {
@@ -34,6 +40,14 @@ class Server {
             console.log(`Server running on port ${this.PORT}`);
         });
     }
+
+    private onDisconnect(): void {
+        process.on('SIGINT', async () => {
+            await disconnectFromMongoDB();
+            process.exit(0);
+        });
+    }
+
 }
 
 const server = new Server();

@@ -6,5 +6,5 @@
     "useTabs": false,
     "semi": true,
     "jsxSingleQuote": false,
-    "endOfLine": "auto"
+    "endOfLine": "auto"    
   }
