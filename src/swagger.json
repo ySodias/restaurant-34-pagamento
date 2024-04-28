@@ -1,0 +1,221 @@
+{
+    "openapi": "3.0.0",
+    "info": {
+        "version": "1.0.0",
+        "title": "Restaurante 34 - Pagamento API",
+        "description": "FIAP TechChallenge",
+        "license": {
+            "name": "MIT",
+            "url": "https://opensource.org/licenses/MIT"
+        }
+    },
+    "servers": [
+        {
+            "url": "/api/",
+            "description": "For http requests"
+        }
+    ],
+    "consumes": ["application/json"],
+    "produces": ["application/json"],
+    "paths": {
+        "/pagamentos": {
+            "post": {
+                "summary": "Cria um novo pagamento",
+                "tags": ["Pagamentos"],
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/definitions/CreatePagamentoPayload"
+                            }
+                        }
+                    },
+                    "produces": ["application/json"]
+                },
+                "responses": {
+                    "201": {
+                        "description": "Pagamento criado com sucesso",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/definitions/PagamentoResponse"
+                                }
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Erro ao criar pagamento",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/definitions/ErrorResponse"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/pagamentos/{idPagamento}": {
+            "get": {
+                "summary": "Busca um pagamento pelo idPagamento",
+                "tags": ["Pagamentos"],
+                "parameters": [
+                    {
+                        "in": "path",
+                        "name": "idPagamento",
+                        "type": "string",
+                        "required": true,
+                        "description": "Identificador do pagamento"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Pagamento encontrado",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/definitions/PagamentoResponse"
+                                }
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Erro ao buscar pagamento",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/definitions/ErrorResponse"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/pedidos/{idPedido}/pagamentos": {
+            "get": {
+                "summary": "Busca pagamentos pelo idPedido",
+                "tags": ["Pagamentos"],
+                "parameters": [
+                    {
+                        "in": "path",
+                        "name": "idPedido",
+                        "type": "string",
+                        "required": true,
+                        "description": "Identificador do pedido"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Pagamento(s) encontrado(s)",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/definitions/PagamentoResponse"
+                                }
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Erro ao buscar pagamento(s)",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/definitions/ErrorResponse"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    },
+    "definitions": {
+        "CreatePagamentoPayload": {
+            "type": "object",
+            "properties": {
+                "idPedido": {
+                    "type": "string",
+                    "description": "Identificador do pedido",
+                    "default": 1
+                },
+                "valor": {
+                    "type": "number",
+                    "description": "Valor do pagamento",
+                    "default": 15.5
+                },
+                "tipoPagamento": {
+                    "type": "string",
+                    "enum": ["CARTAO_CREDITO", "CARTAO_DEBITO", "DINHEIRO", "PIX"],
+                    "description": "Tipo do pagamento",
+                    "$ref": "#/definitions/TipoPagamentoEnum"
+                }
+            }
+        },
+        "PagamentoResponse": {
+            "type": "object",
+            "properties": {
+                "idPagamento": {
+                    "type": "string",
+                    "description": "Identificador do pagamento"
+                },
+                "idPedido": {
+                    "type": "number",
+                    "description": "Identificador do pedido"
+                },
+                "statusPagamento": {
+                    "type": "string",
+                    "enum": ["APROVADO", "PENDENTE", "REJEITADO"],
+                    "description": "Status do pagamento",
+                    "$ref": "#/definitions/StatusPagamentoEnum"
+                },
+                "tipoPagamento": {
+                    "type": "string",
+                    "enum": ["CARTAO_CREDITO", "CARTAO_DEBITO", "DINHEIRO", "PIX"],
+                    "description": "Tipo de pagamento",
+                    "$ref": "#/definitions/TipoPagamentoEnum"
+                },
+                "dataPagamento": {
+                    "type": "string",
+                    "format": "date",
+                    "description": "Data do pagamento"
+                },
+                "valor": {
+                    "type": "number",
+                    "description": "Valor do pagamento"
+                },
+                "createdAt": {
+                    "type": "string",
+                    "format": "date-time",
+                    "description": "Data de criação do pagamento"
+                },
+                "updatedAt": {
+                    "type": "string",
+                    "format": "date-time",
+                    "description": "Data de atualização do pagamento"
+                }
+            }
+        },
+        "ErrorResponse": {
+            "type": "object",
+            "properties": {
+                "message": {
+                    "type": "string",
+                    "description": "Mensagem de erro"
+                }
+            }
+        },
+        "StatusPagamentoEnum": {
+            "type": "string",
+            "enum": ["APROVADO", "PENDENTE", "REJEITADO"],
+            "description": "Status do pagamento"
+        },
+        "TipoPagamentoEnum": {
+            "type": "string",
+            "enum": ["CARTAO_CREDITO", "CARTAO_DEBITO", "DINHEIRO", "PIX"],
+            "description": "Tipo do pagamento"
+        }
+    }
+}
