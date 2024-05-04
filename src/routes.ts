@@ -1,6 +1,8 @@
 import { Application } from 'express';
 import PagamentoController from './controllers/PagamentoController';
 import PagamentoRepository from './repositories/PagamentoRepository';
+import { PagamentoGateway } from './gateways/PagamentoGateway';
+import PagamentoUseCase from './useCases/PagamentoUseCase';
 
 export class Routes {
     private app: Application;
@@ -13,7 +15,9 @@ export class Routes {
 
     private setupRoutes() {
         const pagamentoRepository = new PagamentoRepository();
-        const pagamentoController = new PagamentoController(pagamentoRepository);
+        const pagamentoGateway = new PagamentoGateway(pagamentoRepository);
+        const pagamentoUseCase = new PagamentoUseCase(pagamentoGateway);
+        const pagamentoController = new PagamentoController(pagamentoUseCase);
 
         this.app.post(`${this.BASE_URL}/pagamentos`, pagamentoController.createPagamento.bind(pagamentoController));
         this.app.get(`${this.BASE_URL}/pagamentos/:idPagamento`, pagamentoController.getPagamentoPorIdPagamento.bind(pagamentoController));

@@ -1,14 +1,12 @@
+import { IPagamentoGateway } from "../interfaces/IPagamentoGateway";
+import { IPagamentoUseCase } from "../interfaces/IPagamentoUseCase";
 import { NovoPagamentoDTO } from "../models/dtos/NovoPagamentoDTO";
-import { PagamentoGateway } from "../gateways/PagamentoGateway";
 import { PagamentoDTO } from "../models/dtos/PagamentoDTO";
 import { TipoPagamento } from "../models/enums/TipoPagamento";
 
-export class PagamentoUseCase {
-    private pagamentoGateway: PagamentoGateway;
+export default class PagamentoUseCase implements IPagamentoUseCase {
 
-    constructor(pagamentoGateway: PagamentoGateway) {
-        this.pagamentoGateway = pagamentoGateway;
-    }
+    constructor(private pagamentoGateway: IPagamentoGateway) {}
 
     async executeCreation(novoPagamento: NovoPagamentoDTO): Promise<PagamentoDTO> {
         try {
@@ -35,6 +33,11 @@ export class PagamentoUseCase {
             }
 
             const pagamento = await this.pagamentoGateway.getPagamentoPorIdPagamento(idPagamento);
+
+            if(!pagamento) {
+                throw new Error("Pagamento não localizado.");
+            }
+
             const pagamentoDTO: PagamentoDTO = this.mapPagamentoToDTO(pagamento);
 
             return pagamentoDTO;
@@ -53,7 +56,7 @@ export class PagamentoUseCase {
             const pagamentos = await this.pagamentoGateway.getPagamentoPorIdPedido(idPedido);
 
             if (!pagamentos || pagamentos.length === 0) {
-                return [];
+                throw new Error(`Pagamento(s) não localizado(s) para o pedido ${idPedido}.`);
             }
 
             const pagamentosDTO: PagamentoDTO[] = [];
@@ -79,10 +82,7 @@ export class PagamentoUseCase {
         }
     }
 
-    private mapPagamentoToDTO(pagamento: any): PagamentoDTO {
-        if (!pagamento) {
-            throw new Error("Objeto pagamento vazio.");
-        }
+    private mapPagamentoToDTO(pagamento: any): PagamentoDTO {    
         return {
             idPagamento: pagamento?._id,
             idPedido: pagamento?.idPedido,
