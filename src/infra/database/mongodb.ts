@@ -1,12 +1,11 @@
 import mongoose from "mongoose";
 
-
-const connectToMongoDB = async () => {
+const connectToMongoDB = async (urlManual?: string) => {
     const url = process.env.DATABASE_URL;
     const dbName = process.env.DATABASE_NAME;
 
     try {
-        await mongoose.connect(`${url}/${dbName}`);
+        urlManual ? await mongoose.connect(urlManual) : await mongoose.connect(`${url}/${dbName}`);
         console.log('Connected to MongoDB');
     } catch (error) {
         console.error('Error connecting to MongoDB:', error);

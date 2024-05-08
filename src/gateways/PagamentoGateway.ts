@@ -1,13 +1,11 @@
+import { IPagamentoGateway } from "../interfaces/IPagamentoGateway";
+import { IPagamentoRepository } from "../interfaces/IPagamentoRepository";
+import { PagamentoModel } from "../models/Pagamento.model";
 import { NovoPagamentoDTO } from "../models/dtos/NovoPagamentoDTO";
-import PagamentoRepository from "../repositories/PagamentoRepository";
-import { PagamentoModel } from "@/models/Pagamento.model";
 
-export class PagamentoGateway {
-    private pagamentoRepository: PagamentoRepository;
-    
-    constructor(pagamentoRepository: PagamentoRepository) {
-        this.pagamentoRepository = pagamentoRepository;
-    }
+export class PagamentoGateway implements IPagamentoGateway {
+
+    constructor(private pagamentoRepository: IPagamentoRepository) {}
 
     async createPagamento(novoPagamento: NovoPagamentoDTO): Promise<PagamentoModel> {
         return await this.pagamentoRepository.createPagamento(novoPagamento);
