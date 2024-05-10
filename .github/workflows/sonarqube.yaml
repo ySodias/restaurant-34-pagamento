@@ -19,6 +19,7 @@ jobs:
         env:
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
           SONAR_HOST_URL: ${{ secrets.SONAR_HOST_URL }}
+          SONAR_PROJECT_KEY: ${{ secrets.SONAR_PROJECT_KEY }}
         with:
           args:
-           -Dsonar.projectKey=ySodias_restaurant-34-pagamento_f0b49c2e-c3b5-4a3e-8802-2ac1af6de3fb
+           -Dsonar.projectKey=${SONAR_PROJECT_KEY}
