@@ -1,0 +1,28 @@
+name: "QA Pipeline"
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+
+jobs:
+  qa:
+    name: "QA Pipeline"
+    runs-on: ubuntu-latest
+    permissions:
+      pull-requests: write
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        
+      - name: Configure Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+      
+      - name: Install Deps
+        run: npm install
+
+      - name: Execute Tests
+        run: npm run test
