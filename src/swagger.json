@@ -130,6 +130,62 @@
                     }
                 }
             }
+        },
+        "/pagamentos/webhook/{idPagamento}": {
+            "patch": {
+                "summary": "Atualiza o 'statusPagamento' pelo idPagamento",
+                "tags": ["Pagamentos"],
+                "parameters": [
+                    {
+                        "in": "path",
+                        "name": "idPagamento",
+                        "type": "string",
+                        "required": true,
+                        "description": "Identificador do pagamento"
+                    }
+                ],
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "type": "object",
+                                "properties": {
+                                    "statusPagamento": {
+                                        "type": "string",
+                                        "enum": ["APROVADO", "PENDENTE", "REJEITADO"],
+                                        "description": "Status do pagamento",
+                                        "default": "APROVADO"
+                                    }
+                                }                                
+                            }
+                        }
+                    },
+                    "produces": ["application/json"]
+                },
+                "responses": {
+                    "200": {
+                        "description": "Pagamento atualizado",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/definitions/PagamentoResponse"
+                                }
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Erro ao atualizar pagamento",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/definitions/ErrorResponse"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
         }
     },
     "definitions": {
@@ -139,6 +195,27 @@
                 "idPedido": {
                     "type": "string",
                     "description": "Identificador do pedido",
+                    "default": 1
+                },
+                "valor": {
+                    "type": "number",
+                    "description": "Valor do pagamento",
+                    "default": 15.5
+                },
+                "tipoPagamento": {
+                    "type": "string",
+                    "enum": ["CARTAO_CREDITO", "CARTAO_DEBITO", "DINHEIRO", "PIX"],
+                    "description": "Tipo do pagamento",
+                    "$ref": "#/definitions/TipoPagamentoEnum"
+                }
+            }
+        },
+        "UpdateStatusPagamentoPayload": {
+            "type": "object",
+            "properties": {
+                "idPagamento": {
+                    "type": "string",
+                    "description": "Identificador do Pagamento",
                     "default": 1
                 },
                 "valor": {

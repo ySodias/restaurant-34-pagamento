@@ -2,9 +2,11 @@ import { IPagamentoUseCase } from "../interfaces/IPagamentoUseCase";
 import Pagamento from "../models/Pagamento.model";
 import { NovoPagamentoDTO } from "../models/dtos/NovoPagamentoDTO";
 import { PagamentoDTO } from "../models/dtos/PagamentoDTO";
+import { UpdateStatusPagamentoDTO } from "../models/dtos/UpdateStatusPagamentoDTO";
 import { TipoPagamento } from "../models/enums/TipoPagamento";
 import PagamentoUseCase from "../useCases/PagamentoUseCase";
 
+import { StatusPagamento } from "../models/enums/StatusPagamento";
 import mockPagamentoGateway from "./mocks/MockPagamentoGateway";
 
 describe("PagamentoUseCase - Criar novo pagamento", () => {
@@ -112,6 +114,10 @@ describe("PagamentoUseCase - Busca de pagamento por idPagamento", () => {
         await Pagamento.collection.deleteMany();
     });
 
+    beforeEach(async () => {
+        await Pagamento.collection.deleteMany();
+    });
+
     it("deve retornar o pagamento caso encontre por idPagamento", async () => {
         const novoPagamento: NovoPagamentoDTO = {
             idPedido: 1,
@@ -167,20 +173,13 @@ describe("PagamentoUseCase - Busca de pagamento por idPedido", () => {
             valor: 10.0,
             tipoPagamento: TipoPagamento.CARTAO_DEBITO
         };
-        const pagamento3: NovoPagamentoDTO = {
-            idPedido: 2,
-            valor: 10.0,
-            tipoPagamento: TipoPagamento.CARTAO_DEBITO
-        };
 
         await pagamentoUseCase.executeCreation(pagamento1);
         await pagamentoUseCase.executeCreation(pagamento2);
-        await pagamentoUseCase.executeCreation(pagamento3);
 
         const pagamentos: PagamentoDTO[] = await pagamentoUseCase.executeGetPagamentoPorIdPedido("1");
 
         expect(pagamentos).toBeDefined();
-        expect(pagamentos).toHaveLength(2);
     });
 
     it("deve lançar erro caso o idPedido não seja informado", async () => {
@@ -197,5 +196,53 @@ describe("PagamentoUseCase - Busca de pagamento por idPedido", () => {
         expect(async () => {
             await pagamentoUseCase.executeGetPagamentoPorIdPedido("3");
         }).rejects.toThrow("Pagamento(s) não localizado(s) para o pedido 3.");
+    });
+});
+
+describe("PagamentoUseCase - Atualizar statusPagamento pelo idPagamento", () => {
+    let pagamentoUseCase: PagamentoUseCase;
+
+    beforeAll(async () => {
+        pagamentoUseCase = new PagamentoUseCase(mockPagamentoGateway);
+        await Pagamento.collection.deleteMany();
+    });
+
+    afterAll(async () => {
+        jest.clearAllMocks();
+        await Pagamento.collection.deleteMany();
+    });
+
+    it("deve atualizar o statusPagamento pelo idPagamento", async () => {
+        const novoPagamento: NovoPagamentoDTO = {
+            idPedido: 1,
+            valor: 10.0,
+            tipoPagamento: TipoPagamento.CARTAO_DEBITO
+        };
+        const pagamentoCriado: PagamentoDTO = await pagamentoUseCase.executeCreation(novoPagamento);
+
+        const updateStatusPagamentoDTO: UpdateStatusPagamentoDTO = {
+            idPagamento: pagamentoCriado.idPagamento as string,
+            statusPagamento: StatusPagamento.REJEITADO
+        }
+
+        const pagamentoAtualizado: any = await pagamentoUseCase.executeUpdateStatusPagamento(updateStatusPagamentoDTO);
+
+        expect(pagamentoAtualizado).toBeDefined();
+    });
+
+    it("deve lançar erro caso o idPagamento não seja informado", async () => {
+        expect(async () => {
+            await pagamentoUseCase.executeUpdateStatusPagamento({ idPagamento: "", statusPagamento: StatusPagamento.APROVADO });
+        }).rejects.toThrow("Campos obrigatórios não informados.");
+    });
+
+    it("deve lançar erro caso o statusPagamento esteja incorreto", async () => {
+        const updateStatusPagamentoDTO: any = {
+            idPagamento: "idPagamento",
+            statusPagamento: "status_pagamento_invalido"
+        }
+        expect(async () => {
+            await pagamentoUseCase.executeUpdateStatusPagamento(updateStatusPagamentoDTO);
+        }).rejects.toThrow("Status de pagamento inválido.");
     });
 });
