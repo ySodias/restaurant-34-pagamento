@@ -46,7 +46,6 @@ jobs:
           args: >
             -Dsonar.javascript.typescript=true
             -Dsonar.projectKey=${{ secrets.SONAR_PROJECT_KEY }}
-            -Dsonar.tests=src/tests/
             -Dsonar.exclusions=**/node_modules/**,**/tests/**,**/dist/**,**/tests/**,**/coverage/**
-            -Dsonar.coverage.clover.xmlReportPaths=coverage/lcov.info
-            -Dsonar.javascript.test.pattern=*/tests//*.test.ts
+            -Dsonar.coverage.clover.xmlReportPaths=coverage/clover.xml
+            -Dsonar.javascript.test.pattern=*/tests/*/*.test.ts
