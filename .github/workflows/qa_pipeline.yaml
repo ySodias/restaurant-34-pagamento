@@ -28,6 +28,8 @@ jobs:
         run: npm run test
 
   sonar:
+    needs: qa
+    if: ${{ always() && !cancelled() && needs.build.result == 'success' }}
     name: Build and analyze
     runs-on: ubuntu-latest
     
