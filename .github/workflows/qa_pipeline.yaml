@@ -27,17 +27,6 @@ jobs:
       - name: Execute Tests
         run: npm run test
 
-  sonar:
-    needs: qa
-    if: ${{ always() && !cancelled() && needs.qa.result == 'success' }}
-    name: QA Sonar
-    runs-on: ubuntu-latest
-    
-    steps:
-      - uses: actions/checkout@v4
-        with:
-          fetch-depth: 0  # Shallow clones should be disabled for a better relevancy of analysis
-          
       - uses: sonarsource/sonarqube-scan-action@master
         env:
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
