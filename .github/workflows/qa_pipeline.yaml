@@ -50,4 +50,4 @@ jobs:
             -Dsonar.tests=src
             -Dsonar.test.inclusions=src/**/*.spec.js,src/**/*.spec.jsx,src/**/*.test.js,src/**/*.test.jsx
             -Dsonar.javascript.lcov.reportPaths=coverage/jest/lcov.info
-            -Dsonar.testExecutionReportPaths=coverage/jest/testlog.xml
+            -Dsonar.testExecutionReportPaths=coverage/clover.xml
