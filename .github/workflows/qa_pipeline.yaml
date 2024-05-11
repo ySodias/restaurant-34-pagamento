@@ -27,6 +27,9 @@ jobs:
       - name: Execute Tests
         run: npm run test
 
+      - name: Teste estrutura de pasta
+        run: ls coverage/
+
       - uses: sonarsource/sonarqube-scan-action@master
         env:
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
