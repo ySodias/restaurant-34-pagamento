@@ -49,3 +49,4 @@ jobs:
             -Dsonar.exclusions=**/node_modules/**,**/tests/**,**/dist/**,**/tests/**,**/coverage/**
             -Dsonar.coverage.clover.xmlReportPaths=coverage/clover.xml
             -Dsonar.javascript.test.pattern=*/tests/*/*.test.ts
+            -Dsonar.javascript.test.reportPaths=coverage/index.html
