@@ -8,7 +8,7 @@ on:
 
 jobs:
   qa:
-    name: "QA Pipeline"
+    name: "Project Tests"
     runs-on: ubuntu-latest
     permissions:
       pull-requests: write
@@ -29,8 +29,8 @@ jobs:
 
   sonar:
     needs: qa
-    if: ${{ always() && !cancelled() && needs.build.result == 'success' }}
-    name: Build and analyze
+    if: ${{ always() && !cancelled() && needs.qa.result == 'success' }}
+    name: QA Sonar
     runs-on: ubuntu-latest
     
     steps:
