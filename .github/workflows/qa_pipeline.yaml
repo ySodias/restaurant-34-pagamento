@@ -39,4 +39,3 @@ jobs:
             -Dsonar.javascript.typescript=true
             -Dsonar.projectKey=${{ secrets.SONAR_PROJECT_KEY }}
             -Dsonar.javascript.typescript.lcov.reportPaths=coverage/lcov.info
-            -Dsonar.coverageReportPaths=coverage/clover.xml
