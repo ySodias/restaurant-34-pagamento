@@ -43,11 +43,10 @@ jobs:
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
           SONAR_HOST_URL: ${{ secrets.SONAR_HOST_URL }}
         with:
-          projectBaseDir: src/
           args: >
             -Dsonar.javascript.typescript=true
             -Dsonar.projectKey=${{ secrets.SONAR_PROJECT_KEY }}
-            -Dsonar.tests=tests/
+            -Dsonar.tests=src/tests/
             -Dsonar.exclusions=**/node_modules/**,**/tests/**,**/dist/**,**/tests/**,**/coverage/**
-            -Dsonar.coverage.clover.xmlReportPaths=coverage/clover.xml
+            -Dsonar.coverage.clover.xmlReportPaths=coverage/lcov.info
             -Dsonar.javascript.test.pattern=*/tests//*.test.ts
