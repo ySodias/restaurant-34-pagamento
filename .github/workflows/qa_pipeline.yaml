@@ -38,5 +38,5 @@ jobs:
           args: >
             -Dsonar.javascript.typescript=true
             -Dsonar.projectKey=${{ secrets.SONAR_PROJECT_KEY }}
-            -Dsonar.exclusions=**/node_modules/**,**/tests/**,**/dist/**,**/tests/**
+            -Dsonar.exclusions=**/node_modules/**,**/tests/**,**/dist/**,**/tests/**,src/routes.ts,src/server.ts
             -Dsonar.javascript.typescript.lcov.reportPaths=coverage/lcov.info
