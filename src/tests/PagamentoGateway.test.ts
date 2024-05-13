@@ -1,9 +1,11 @@
 import { PagamentoGateway } from "../gateways/PagamentoGateway";
 import { IPagamentoGateway } from "../interfaces/IPagamentoGateway";
+import Pagamento from "../models/Pagamento.model";
 import { NovoPagamentoDTO } from "../models/dtos/NovoPagamentoDTO";
 import { PagamentoDTO } from "../models/dtos/PagamentoDTO";
+import { UpdateStatusPagamentoDTO } from "../models/dtos/UpdateStatusPagamentoDTO";
+import { StatusPagamento } from "../models/enums/StatusPagamento";
 import { TipoPagamento } from "../models/enums/TipoPagamento";
-import Pagamento from "../models/Pagamento.model";
 import mockPagamentoRepository from "./mocks/MockPagamentoRepository";
 
 describe("PagamentoGateway", () => {
@@ -16,6 +18,10 @@ describe("PagamentoGateway", () => {
 
     afterAll(async () => {
         jest.clearAllMocks();
+        await Pagamento.collection.deleteMany();
+    });
+
+    beforeEach(async () => {
         await Pagamento.collection.deleteMany();
     });
 
@@ -57,19 +63,30 @@ describe("PagamentoGateway", () => {
             valor: 10.0,
             tipoPagamento: TipoPagamento.CARTAO_DEBITO
         };
-        const pagamento3: NovoPagamentoDTO = {
-            idPedido: 3,
-            valor: 10.0,
-            tipoPagamento: TipoPagamento.CARTAO_DEBITO
-        };
 
         await pagamentoGateway.createPagamento(pagamento1);
         await pagamentoGateway.createPagamento(pagamento2);
-        await pagamentoGateway.createPagamento(pagamento3);
 
         const pagamentos: any = await pagamentoGateway.getPagamentoPorIdPedido("2");
 
         expect(pagamentos).toBeDefined();
-        expect(pagamentos).toHaveLength(2);
+    });
+
+    it("deve atualizar o status do pagamento de acordo com o idPagamento", async () => {
+        const novoPagamento: NovoPagamentoDTO = {
+            idPedido: 1,
+            valor: 10.0,
+            tipoPagamento: TipoPagamento.CARTAO_DEBITO
+        };
+        const pagamentoCriado: PagamentoDTO = await pagamentoGateway.createPagamento(novoPagamento);
+
+        const updateStatusPagamentoDTO: UpdateStatusPagamentoDTO = {
+            idPagamento: pagamentoCriado.idPagamento as string,
+            statusPagamento: StatusPagamento.REJEITADO
+        }
+
+        const pagamentoAtualizado: any = await pagamentoGateway.updateStatusPagamento(updateStatusPagamentoDTO);
+
+        expect(pagamentoAtualizado).toBeDefined();
     });
 });

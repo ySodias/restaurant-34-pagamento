@@ -22,6 +22,6 @@ export class Routes {
         this.app.post(`${this.BASE_URL}/pagamentos`, pagamentoController.createPagamento.bind(pagamentoController));
         this.app.get(`${this.BASE_URL}/pagamentos/:idPagamento`, pagamentoController.getPagamentoPorIdPagamento.bind(pagamentoController));
         this.app.get(`${this.BASE_URL}/pedidos/:idPedido/pagamentos`, pagamentoController.getPagamentoPorIdPedido.bind(pagamentoController));
-        this.app.post(`${this.BASE_URL}/pagamentos/webhook/:idPagamento`, pagamentoController.createPagamento);
+        this.app.patch(`${this.BASE_URL}/pagamentos/webhook/:idPagamento`, pagamentoController.updateStatusPagamento.bind(pagamentoController));
     }
 }

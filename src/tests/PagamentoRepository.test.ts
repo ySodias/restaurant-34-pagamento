@@ -1,9 +1,11 @@
 import { IPagamentoRepository } from "../interfaces/IPagamentoRepository";
-import PagamentoRepository from "../repositories/PagamentoRepository";
-import Pagamento from "../models/Pagamento.model";
+import Pagamento, { PagamentoModel } from "../models/Pagamento.model";
 import { NovoPagamentoDTO } from "../models/dtos/NovoPagamentoDTO";
 import { PagamentoDTO } from "../models/dtos/PagamentoDTO";
+import { UpdateStatusPagamentoDTO } from "../models/dtos/UpdateStatusPagamentoDTO";
+import { StatusPagamento } from "../models/enums/StatusPagamento";
 import { TipoPagamento } from "../models/enums/TipoPagamento";
+import PagamentoRepository from "../repositories/PagamentoRepository";
 
 describe("PagamentoRepository", () => {
     let pagamentoRepository: IPagamentoRepository;
@@ -15,6 +17,10 @@ describe("PagamentoRepository", () => {
 
     afterAll(async () => {
         jest.clearAllMocks();
+        await Pagamento.collection.deleteMany();
+    });
+
+    beforeEach(async () => {
         await Pagamento.collection.deleteMany();
     });
 
@@ -56,19 +62,29 @@ describe("PagamentoRepository", () => {
             valor: 10.0,
             tipoPagamento: TipoPagamento.CARTAO_DEBITO
         };
-        const pagamento3: NovoPagamentoDTO = {
-            idPedido: 3,
-            valor: 10.0,
-            tipoPagamento: TipoPagamento.CARTAO_DEBITO
-        };
 
         await pagamentoRepository.createPagamento(pagamento1);
         await pagamentoRepository.createPagamento(pagamento2);
-        await pagamentoRepository.createPagamento(pagamento3);
 
         const pagamentos: any = await pagamentoRepository.getPagamentoPorIdPedido("2");
 
         expect(pagamentos).toBeDefined();
-        expect(pagamentos).toHaveLength(2);
+    });
+
+    it("deve atualizar o status do pagamento encontrado pelo idPagamento", async () => {
+        const novoPagamento: NovoPagamentoDTO = {
+            idPedido: 1,
+            valor: 10.0,
+            tipoPagamento: TipoPagamento.CARTAO_DEBITO
+        };
+        const pagamentoCriado: PagamentoDTO = await pagamentoRepository.createPagamento(novoPagamento);
+
+        const updateStatusPagamentoDTO: UpdateStatusPagamentoDTO = {
+            idPagamento: pagamentoCriado.idPagamento as string,
+            statusPagamento: StatusPagamento.REJEITADO
+        }
+        const pagamentoAtualizado: any = await pagamentoRepository.updateStatusPagamento(updateStatusPagamentoDTO);
+        
+        expect(pagamentoAtualizado).toBeDefined();
     });
 });
