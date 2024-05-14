@@ -6,7 +6,7 @@ on:
       - main
 
 jobs:
-  build:
+  build_push:
     if: github.event_name == 'push' && github.ref == 'refs/heads/main' && github.event_name != 'pull_request'
     runs-on: ubuntu-latest
 
@@ -34,7 +34,7 @@ jobs:
       - name: Login to Amazon ECR
         id: login-ecr
         uses: aws-actions/amazon-ecr-login@v2
-        
+
       - name: Build, tag, and push the image to Amazon ECR
         id: build-image
         env:
@@ -45,4 +45,15 @@ jobs:
           docker build -t $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG .
           docker push $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG
 
+      - name: Update kube config
+        run: aws eks update-kubeconfig --name restaurant-34-cluster --region us-east-1
+
+      - name: Deploy to EKS
+        env:
+          ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}        
+          IMAGE_TAG: ${{ steps.commit.outputs.short }}
+        run: |
+          sed -i.bak "s|DOCKER_IMAGE|$ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG|g" src/infra/manifests/deployment.yml && \
+          kubectl apply -f src/infra/manifests/deployment.yml
+          kubectl apply -f src/infra/manifests/service.yaml
       
