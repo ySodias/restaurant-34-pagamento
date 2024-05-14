@@ -55,5 +55,5 @@ jobs:
         run: |
           sed -i "s@image: $ECR_REGISTRY/$ECR_REPOSITORY:latest@image: $ECR_REGISTRY/$ECR_REPOSITORY:${IMAGE_TAG}@g" src/infra/manifests/deployment.yml && \
           kubectl apply -f src/infra/manifests/deployment.yml
-          kubectl apply -f src/infra/manifests/service.yaml
+          kubectl apply -f src/infra/manifests/service.yml
       
