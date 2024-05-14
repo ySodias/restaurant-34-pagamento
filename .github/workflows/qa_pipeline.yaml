@@ -8,12 +8,13 @@ on:
 
 jobs:
   qa:
+    if: github.event_name == 'pull_request'
     name: "Project Tests"
     runs-on: ubuntu-latest
     permissions:
       pull-requests: write
     steps:
-      - name: Checkout
+      - name: Checkout Repository
         uses: actions/checkout@v4
         
       - name: Configure Node

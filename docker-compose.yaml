@@ -1,0 +1,27 @@
+version: "3.8"
+
+services:
+  pagamento-api:
+    container_name: node_app
+    build: .
+    ports:
+      - "3000:3000"
+    environment:
+      - DATABASE_URL=mongodb://root:password@mongodb:27017
+      - DATABASE_NAME=db_pagamento
+    depends_on:
+      - mongodb
+
+  mongodb:
+    container_name: mongodb
+    image: mongo:latest
+    environment:
+      - MONGO_INITDB_ROOT_USERNAME=root
+      - MONGO_INITDB_ROOT_PASSWORD=password
+      - MONGO_INITDB_DATABASE=root-db
+    ports:
+      - "27017:27017"
+    volumes:
+      - ./docker-entrypoint-initdb.d/mongo-init.js:/docker-entrypoint-initdb.d/mongo-init.js:ro
+volumes:
+  mongodb_data:
