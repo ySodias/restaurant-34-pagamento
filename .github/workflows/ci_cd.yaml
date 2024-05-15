@@ -55,6 +55,8 @@ jobs:
         run: |
           sed -i "s@image: 035133178716.dkr.ecr.us-east-1.amazonaws.com/restaurante-34-pagamento:latest@image: 035133178716.dkr.ecr.us-east-1.amazonaws.com/restaurante-34-pagamento:${IMAGE_TAG}@g" src/infra/manifests/deployment.yml && \
           
+          echo ${IMAGE_TAG}
+
           cat src/infra/manifests/deployment.yml
 
           kubectl apply -f src/infra/manifests/deployment.yml
