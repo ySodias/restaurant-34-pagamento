@@ -11,5 +11,5 @@ spec:
     protocol: TCP
     targetPort: 3000
   selector:
-    app: restaurante34pagamento
+    app: restaurant-34-pagamento
   type: NodePort
