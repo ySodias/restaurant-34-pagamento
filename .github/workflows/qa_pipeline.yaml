@@ -39,5 +39,5 @@ jobs:
           args: >
             -Dsonar.javascript.typescript=true
             -Dsonar.projectKey=${{ secrets.SONAR_PROJECT_KEY }}
-            -Dsonar.exclusions=**/node_modules/**,**/tests/**,**/dist/**,**/tests/**,src/routes.ts,src/server.ts
+            -Dsonar.exclusions=**/node_modules/**,**/tests/**,**/dist/**,**/tests/**,src/routes.ts,src/server.ts,docker-compose.yaml,docker-entrypoint-initdb.d/**,Dockerfile,**/manifests/**
             -Dsonar.javascript.typescript.lcov.reportPaths=coverage/lcov.info
