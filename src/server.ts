@@ -7,7 +7,7 @@ import { Routes } from './routes';
 import { connectToMongoDB, disconnectFromMongoDB } from "./infra/database/mongodb";
 
 class Server {
-    private app;
+    public app;
 
     private readonly PORT: number;
 
@@ -51,4 +51,7 @@ class Server {
 }
 
 const server = new Server();
+const app = server.app;
+// export default { app };
+module.exports = {app}
 server.start();
