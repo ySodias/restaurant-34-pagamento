@@ -1,3 +1,3 @@
 module.exports = {
-    default: '--publish-quiet --require dist/tests/features/step_definitions/**/*.js dist/tests/features/**/*.feature',
+    default: '--publish-quiet --require dist/server.js src/tests/features/**/*.feature',
 };

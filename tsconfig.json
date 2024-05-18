@@ -15,6 +15,6 @@
         },
         "typeRoots": ["./node_modules/@types", "src/tests/@types"]
     },
-    "include": ["src/**/*.ts", "src/tests/**/*.ts", "src/tests/features/support/world.mjs", "src/tests/features/step_definitions/PagamentoSteps.mjs", "src/server.ts"],
+    "include": ["src/**/*.ts", "src/tests/features/support/world.mjs", "src/tests/features/step_definitions/PagamentoSteps.mjs"],
     "exclude": ["node_modules"]
 }

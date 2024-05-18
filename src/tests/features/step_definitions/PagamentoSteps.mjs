@@ -1,17 +1,13 @@
 import { expect } from 'chai';
-import { Given, Then, When } from '@cucumber/cucumber';
+import { Given, Then, When} from '@cucumber/cucumber';
 import request from 'supertest';
-import { app } from '../../../server';
-
-// const request = require('supertest');
-// const { Given, When, Then } = require('cucumber');
-// const { expect } = require('chai');
-// const { app } = require('../../../server');
+import * as http from 'http'; 
+import server from '../../../../dist/server.js';
 
 let response;
 let pagamentoRequest;
 
-Given('Eu tenho um pagamento pedido de criação válido', async function () {
+Given('Eu tenho um pagamento pedido de criação válido', function () {
     pagamentoRequest = {
         idPedido: 2,
         valor: 10.0,
@@ -20,7 +16,13 @@ Given('Eu tenho um pagamento pedido de criação válido', async function () {
 });
 
 When('Eu submento os dados para criar o pagamento', async function () {
-    response = await request(app).post('/api/pagamentos').send(pagamentoRequest);
+  
+    response = await server.default.post('/api/pagamentos').send({
+      idPedido: 2,
+      valor: 10.0,
+      tipoPagamento: 'CARTAO_DEBITO',
+  })
+
 });
 
 Then('o pagamento deve ser criado com sucesso', function () {
