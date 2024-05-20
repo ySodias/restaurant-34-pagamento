@@ -5,9 +5,10 @@ import * as swaggerDocument from './swagger.json';
 import swaggerUi from 'swagger-ui-express';
 import { Routes } from './routes';
 import { connectToMongoDB, disconnectFromMongoDB } from "./infra/database/mongodb";
+import request from 'supertest';
 
 class Server {
-    private app;
+    public app;
 
     private readonly PORT: number;
 
@@ -31,7 +32,7 @@ class Server {
         try {
             new Routes(this.app);
         } catch (e) {
-            console.error("Erro a criar rotas -> ", e)
+            console.error("Erro a criar rotas -> ", e);
         }
     }
 
@@ -47,8 +48,8 @@ class Server {
             process.exit(0);
         });
     }
-
 }
 
 const server = new Server();
 server.start();
+export default request(server.app);
