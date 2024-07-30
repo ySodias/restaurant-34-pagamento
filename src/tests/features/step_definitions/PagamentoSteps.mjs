@@ -1,5 +1,5 @@
 import { expect } from 'chai';
-import { Given, Then, When} from '@cucumber/cucumber';
+import { Given, Then, When, AfterAll} from '@cucumber/cucumber';
 import request from 'supertest';
 import * as http from 'http'; 
 import server from '../../../../dist/server.js';
@@ -28,3 +28,10 @@ When('Eu submento os dados para criar o pagamento', async function () {
 Then('o pagamento deve ser criado com sucesso', function () {
     expect(response.status).to.equal(201);
 });
+
+AfterAll(async () => {
+    await server.close();
+
+    // Desconecte do MongoDB
+    // await MongoDB.disconnect();
+})
