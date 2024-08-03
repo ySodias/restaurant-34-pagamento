@@ -6,7 +6,8 @@ import swaggerUi from 'swagger-ui-express';
 import { Routes } from './routes';
 import { connectToMongoDB, disconnectFromMongoDB } from "./infra/database/mongodb";
 import request from 'supertest';
-
+import helmet from "helmet";
+import crypto from 'crypto';
 class Server {
     public app;
 
@@ -25,7 +26,33 @@ class Server {
         this.app.use(express.json());
         this.app.use(express.urlencoded({ extended: true }));
         this.app.use("/swagger", swaggerUi.serve, swaggerUi.setup(swaggerDocument));
-        this.app.use(cors());
+        this.app.use(cors({
+            origin: process.env.ORIGINS
+        }));
+        this.app.use((req, res, next) => {
+            res.locals.nonce = crypto.randomBytes(16).toString('hex');
+            next();
+          });
+        this.app.use((req, res, next) => {
+            res.setHeader('X-Content-Type-Options', 'nosniff');
+            next();
+          });
+        this.app.use(
+            helmet.contentSecurityPolicy({
+            directives: {
+            defaultSrc: ["'none'"],
+            scriptSrc: ["'self'", (req: any, res: any) => `'nonce-${res.locals.nonce}'`],
+            styleSrc: ["'self'", 'https://fonts.googleapis.com', (req: any, res: any) => `'nonce-${res.locals.nonce}'`],
+            fontSrc: ["'self'", 'https://fonts.gstatic.com'],
+            imgSrc: ["'self'"],
+            connectSrc: ["'self'"],
+            objectSrc: ["'none'"],
+            upgradeInsecureRequests: [],
+            action: "deny",
+            },
+        })
+        );
+        this.app.disable('x-powered-by');
     }
 
     private configureRoutes(): void {
