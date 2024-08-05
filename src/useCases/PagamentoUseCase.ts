@@ -83,23 +83,37 @@ export default class PagamentoUseCase implements IPagamentoUseCase {
 
     async executeUpdateStatusPagamento(updateStatusPedidoDTO: UpdateStatusPagamentoDTO): Promise<PagamentoDTO> {
         try {
-            if (!updateStatusPedidoDTO.idPagamento || !updateStatusPedidoDTO.statusPagamento) {
+            const { idPagamento, statusPagamento } = updateStatusPedidoDTO;
+
+            if (!idPagamento || !statusPagamento) {
                 throw new Error("Campos obrigatórios não informados.");
             }
 
-            if (!this.isValidEnumValue(StatusPagamento, updateStatusPedidoDTO.statusPagamento)) {
+            if (!this.isValidEnumValue(StatusPagamento, statusPagamento)) {
                 throw new Error("Status de pagamento inválido.");
             }
 
             const pagamentoAtualizado = await this.pagamentoGateway.updateStatusPagamento(updateStatusPedidoDTO);
             const pagamentoDTO: PagamentoDTO = this.mapPagamentoToDTO(pagamentoAtualizado);
 
+            if (statusPagamento === StatusPagamento.REJEITADO) {
+                this.queueService.publish(this.erroPagamentoCriadoQueue, { idPedido: pagamentoDTO.idPedido });
+            } else if (statusPagamento === StatusPagamento.APROVADO) {
+                const pagamentoCriadoMessage = {
+                    idPagamento: pagamentoDTO.idPagamento,
+                    idPedido: pagamentoDTO.idPedido
+                };
+                this.queueService.publish(this.pagamentoCriadoQueue, pagamentoCriadoMessage);
+            }
+
             return pagamentoDTO;
+
         } catch (error: any) {
             console.error("Erro ao atualizar o status do pagamento.", error);
             throw new Error(error.message || "Falha ao buscar pagamento por idPedido.");
         }
     }
+
 
     async startConsumingMessages() {
         await this.queueService.connect();
@@ -110,16 +124,11 @@ export default class PagamentoUseCase implements IPagamentoUseCase {
                 valor: message.valor,
                 tipoPagamento: message.tipoPagamento as TipoPagamento
             };
-            await this.executeCreation(novoPagamento).then((pagamentoCriado: PagamentoDTO) => {
-                const pagamentoCriadoMessage = {
-                    idPagamento: pagamentoCriado.idPagamento,
-                    idPedido: pagamentoCriado.idPedido
-                };
-                this.queueService.publish(this.pagamentoCriadoQueue, pagamentoCriadoMessage);
-            }).catch(err => {
-                console.log(err);
+            try {
+                await this.executeCreation(novoPagamento);
+            } catch (err) {
                 this.queueService.publish(this.erroPagamentoCriadoQueue, { idPedido: message.id });
-            });
+            }
         });
     }
 
