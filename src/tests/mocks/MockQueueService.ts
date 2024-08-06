@@ -1,5 +1,5 @@
-import { IQueueAdapter } from "@/interfaces/IQueueAdapter";
-import RabbitMQService from "@/infra/messaging/RabbitMQService";
+import { IQueueAdapter } from "../../interfaces/IQueueAdapter";
+import RabbitMQService from "../../infra/messaging/RabbitMQService";
 
 const mockQueueService: IQueueAdapter = new RabbitMQService();
 
