@@ -8,12 +8,13 @@ import PagamentoUseCase from "../useCases/PagamentoUseCase";
 
 import { StatusPagamento } from "../models/enums/StatusPagamento";
 import mockPagamentoGateway from "./mocks/MockPagamentoGateway";
+import mockQueueService from "./mocks/MockQueueService";
 
 describe("PagamentoUseCase - Criar novo pagamento", () => {
     let pagamentoUseCase: IPagamentoUseCase;
 
     beforeAll(async () => {
-        pagamentoUseCase = new PagamentoUseCase(mockPagamentoGateway);
+        pagamentoUseCase = new PagamentoUseCase(mockPagamentoGateway, mockQueueService);
     });
 
     afterAll(async () => {
@@ -63,7 +64,7 @@ describe("PagamentoUseCase - Erro no Gateway de Pagamento", () => {
     let pagamentoUseCase: PagamentoUseCase;
 
     beforeAll(async () => {
-        pagamentoUseCase = new PagamentoUseCase(mockPagamentoGateway);
+        pagamentoUseCase = new PagamentoUseCase(mockPagamentoGateway, mockQueueService);
         jest.spyOn(mockPagamentoGateway, "createPagamento")
             .mockRejectedValueOnce(new Error());
         jest.spyOn(mockPagamentoGateway, "getPagamentoPorIdPagamento")
@@ -106,7 +107,7 @@ describe("PagamentoUseCase - Busca de pagamento por idPagamento", () => {
     let pagamentoUseCase: PagamentoUseCase;
 
     beforeAll(async () => {
-        pagamentoUseCase = new PagamentoUseCase(mockPagamentoGateway);
+        pagamentoUseCase = new PagamentoUseCase(mockPagamentoGateway, mockQueueService);
     });
 
     afterAll(async () => {
@@ -153,7 +154,7 @@ describe("PagamentoUseCase - Busca de pagamento por idPedido", () => {
     let pagamentoUseCase: PagamentoUseCase;
 
     beforeAll(async () => {
-        pagamentoUseCase = new PagamentoUseCase(mockPagamentoGateway);
+        pagamentoUseCase = new PagamentoUseCase(mockPagamentoGateway, mockQueueService);
         await Pagamento.collection.deleteMany();
     });
 
@@ -203,7 +204,7 @@ describe("PagamentoUseCase - Atualizar statusPagamento pelo idPagamento", () => 
     let pagamentoUseCase: PagamentoUseCase;
 
     beforeAll(async () => {
-        pagamentoUseCase = new PagamentoUseCase(mockPagamentoGateway);
+        pagamentoUseCase = new PagamentoUseCase(mockPagamentoGateway, mockQueueService);
         await Pagamento.collection.deleteMany();
     });
 

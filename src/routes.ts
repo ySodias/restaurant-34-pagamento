@@ -3,6 +3,7 @@ import PagamentoController from './controllers/PagamentoController';
 import PagamentoRepository from './repositories/PagamentoRepository';
 import { PagamentoGateway } from './gateways/PagamentoGateway';
 import PagamentoUseCase from './useCases/PagamentoUseCase';
+import { RabbitMQService } from './infra/messaging/RabbitMQService';
 
 export class Routes {
     private app: Application;
@@ -16,7 +17,8 @@ export class Routes {
     private setupRoutes() {
         const pagamentoRepository = new PagamentoRepository();
         const pagamentoGateway = new PagamentoGateway(pagamentoRepository);
-        const pagamentoUseCase = new PagamentoUseCase(pagamentoGateway);
+        const queueService = new RabbitMQService();
+        const pagamentoUseCase = new PagamentoUseCase(pagamentoGateway, queueService);
         const pagamentoController = new PagamentoController(pagamentoUseCase);
 
         this.app.post(`${this.BASE_URL}/pagamentos`, pagamentoController.createPagamento.bind(pagamentoController));
