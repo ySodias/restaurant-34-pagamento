@@ -3,8 +3,9 @@ import { NovoPagamentoDTO } from "../../models/dtos/NovoPagamentoDTO";
 import { PagamentoDTO } from "../../models/dtos/PagamentoDTO";
 import PagamentoUseCase from "../../useCases/PagamentoUseCase";
 import mockPagamentoGateway from "./MockPagamentoGateway";
+import mockQueueService from "./MockQueueService";
 
-const mockPagamentoUseCase: IPagamentoUseCase = new PagamentoUseCase(mockPagamentoGateway)
+const mockPagamentoUseCase: IPagamentoUseCase = new PagamentoUseCase(mockPagamentoGateway, mockQueueService)
 
 jest.spyOn(mockPagamentoUseCase, "executeCreation")
     .mockImplementation(async (novoPagamento: NovoPagamentoDTO) => {
