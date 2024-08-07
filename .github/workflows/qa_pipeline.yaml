@@ -30,14 +30,3 @@ jobs:
 
       - name: Teste estrutura de pasta
         run: ls coverage/
-
-      - uses: sonarsource/sonarqube-scan-action@master
-        env:
-          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
-          SONAR_HOST_URL: ${{ secrets.SONAR_HOST_URL }}
-        with:
-          args: >
-            -Dsonar.javascript.typescript=true
-            -Dsonar.projectKey=${{ secrets.SONAR_PROJECT_KEY }}
-            -Dsonar.exclusions=**/node_modules/**,**/tests/**,**/dist/**,**/tests/**,src/routes.ts,src/server.ts,docker-compose.yaml,docker-entrypoint-initdb.d/**,Dockerfile,**/manifests/**
-            -Dsonar.javascript.typescript.lcov.reportPaths=coverage/lcov.info
