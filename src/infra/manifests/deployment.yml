@@ -27,7 +27,7 @@ spec:
                 configMapKeyRef:
                   name: restaurant-34-pagamento
                   key: DATABASE_NAME
-          image: 035133178716.dkr.ecr.us-east-1.amazonaws.com/restaurante-34-pagamento:latest
+          image: 138684654037.dkr.ecr.us-east-1.amazonaws.com/restaurante-34-pagamento:latest
           imagePullPolicy: IfNotPresent
           ports:
             - containerPort: 3000
